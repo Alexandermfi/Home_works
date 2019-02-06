@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -25,15 +25,9 @@ namespace csharp_example_1
         {
             driver.Url = "http://localhost/litecart/admin/.";
             wait.Until(ExpectedConditions.ElementToBeClickable(By.Name("login")));
-
-            IWebElement usernameFiled = driver.FindElement(By.Name("username"));
-            usernameFiled.SendKeys("admin");
-
-            IWebElement passwordField = driver.FindElement(By.Name("password"));
-            passwordField.SendKeys("admin");
-
-            IWebElement loginButton = driver.FindElement(By.Name("login"));
-            loginButton.Click();
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();          
             wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@title='My Store']")));
         }
 
