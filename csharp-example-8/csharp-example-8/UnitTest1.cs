@@ -32,66 +32,12 @@ namespace csharp_example_1
             
             wait.Until(ExpectedConditions.TitleContains("Online Store | My Store"));
 
-            IWebElement topProducts = driver.FindElement(By.Id("box-most-popular"));
-            IWebElement centerProducts = driver.FindElement(By.Id("box-campaigns"));
-            IWebElement bottomProducts = driver.FindElement(By.Id("box-latest-products"));
+            //div.image - wrapper > div.sticker
 
-            IList<IWebElement> topListProducts = topProducts.FindElements(By.CssSelector("li"));
-
-            foreach (IWebElement el in topListProducts) {
-                bool trigger = false;
-                if (IsElementPresent(el, By.CssSelector("div.sticker.new")))
-                {
-                    trigger = true;
-                }
-                else if (IsElementPresent(el, By.CssSelector("div.sticker.sale")))
-                {
-                    trigger = true;
-                }
-                else {
-                    trigger = false;
-                }
-                Assert.IsTrue(trigger);
-                
-            }
-
-            IList<IWebElement> centerListProducts = centerProducts.FindElements(By.CssSelector("li"));
-            foreach (IWebElement el in centerListProducts)
-            {
-                bool trigger = false;
-                if (IsElementPresent(el, By.CssSelector("div.sticker.new")))
-                {
-                    trigger = true;
-                }
-                else if (IsElementPresent(el, By.CssSelector("div.sticker.sale")))
-                {
-                    trigger = true;
-                }
-                else
-                {
-                    trigger = false;
-                }
-                Assert.IsTrue(trigger);
-            }
-
-
-            IList<IWebElement> bottomListProducts = bottomProducts.FindElements(By.CssSelector("li"));
-            foreach (IWebElement el in bottomListProducts)
-            {
-                bool trigger = false;
-                if (IsElementPresent(el, By.CssSelector("div.sticker.new")))
-                {
-                    trigger = true;
-                }
-                else if (IsElementPresent(el, By.CssSelector("div.sticker.sale")))
-                {
-                    trigger = true;
-                }
-                else
-                {
-                    trigger = false;
-                }
-                Assert.IsTrue(trigger);
+            IList<IWebElement> products = driver.FindElements(By.CssSelector("div.image-wrapper"));           
+            
+            foreach (IWebElement el in products) {
+                   Assert.IsTrue(IsElementPresent(el, By.CssSelector("div.sticker")));
             }
 
         }
