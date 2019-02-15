@@ -34,7 +34,7 @@ namespace csharp_example_1
 
             //div.image - wrapper > div.sticker
 
-            IList<IWebElement> products = driver.FindElements(By.CssSelector("div.image-wrapper"));           
+            IList<IWebElement> products = driver.FindElements(By.CssSelector("li.product"));           
             
             foreach (IWebElement el in products) {
                    Assert.IsTrue(IsElementPresent(el, By.CssSelector("div.sticker")));
