@@ -81,22 +81,67 @@ namespace csharp_example_1
                 Assert.IsTrue(zoneList.SequenceEqual(sortedZoneList));
 
             }
-
-            bool IsElementPresent(IWebElement element, By locator)
-            {
-                try
-                {
-                    element.FindElement(locator);
-                    return true;
-                }
-                catch (NoSuchElementException ex)
-                {
-                    return false;
-                }
-            }
+                  
 
         }
-        
+        [Test]
+        public void TestMethod2()
+        {
+            driver.Url = "http://localhost:/litecart/admin/.";
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.Name("login")));
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@title='My Store']")));
+
+
+            driver.FindElement(By.XPath("//span[contains(.,'Geo Zones')]")).Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("content")));
+
+            IList<IWebElement> Rows = driver.FindElements(By.CssSelector(".row"));
+            
+            List<string> zoneUrls = new List<string>();
+
+            foreach (IWebElement el in Rows)
+            {             
+                    zoneUrls.Add(el.FindElement(By.CssSelector("a")).GetAttribute("href"));               
+            }
+
+            foreach (string link in zoneUrls)
+            {
+                driver.Url = link;
+
+                List<string> zoneList= new List<string>();
+                List<string> sortedZoneList = new List<string>();
+
+                List<IWebElement> zoneRows = new List<IWebElement>(driver.FindElements(By.CssSelector("select[name*='zone_code']")));
+
+                foreach (IWebElement el in zoneRows)
+                {
+                    
+                    SelectElement selectedValue = new SelectElement(el);
+                    sortedZoneList.Add(selectedValue.SelectedOption.Text);
+                }
+                sortedZoneList = zoneList;
+                sortedZoneList.Sort();
+                Assert.IsTrue(zoneList.SequenceEqual(sortedZoneList));
+            }
+
+          
+
+        }
+        public bool IsElementPresent(IWebElement element, By locator)
+        {
+            try
+            {
+                element.FindElement(locator);
+                return true;
+            }
+            catch (NoSuchElementException ex)
+            {
+                return false;
+            }
+        }
 
         [TearDown]
         public void stop()
