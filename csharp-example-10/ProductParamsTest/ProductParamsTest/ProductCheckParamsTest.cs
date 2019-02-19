@@ -3,6 +3,7 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
 
 namespace csharp_example_10_1
@@ -12,16 +13,19 @@ namespace csharp_example_10_1
     public class ProductCheckParams
 
     {
-        private ChromeDriver driver;
+        private InternetExplorerDriver driver;
         private WebDriverWait wait;
+        InternetExplorerOptions options = new InternetExplorerOptions();
+
 
 
         [SetUp]
         public void start()
         {
-            driver = new ChromeDriver();
+            options.RequireWindowFocus = true;
+            driver = new InternetExplorerDriver(options);
 
-            driver.Manage().Window.Maximize();
+            //driver.Manage().Window.Maximize();
 
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         }
