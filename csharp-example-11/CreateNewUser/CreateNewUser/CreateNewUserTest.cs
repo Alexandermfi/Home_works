@@ -62,14 +62,22 @@ namespace csharp_example_11
             driver.FindElement(By.Name("phone")).SendKeys(phone);
  
             IWebElement zoneSelector = driver.FindElement(By.XPath("//select[@name='zone_code']"));
-       
-            if (zoneSelector.GetAttribute("disabled").Equals("true")) {
+
+            if (zoneSelector.GetAttribute("disabled").Equals("true"))
+            {
                 driver.FindElement(By.Name("password")).SendKeys(password);
                 driver.FindElement(By.Name("confirmed_password")).SendKeys(password);
                 driver.FindElement(By.Name("create_account")).Click();
+
+                //create new element after page update
                 SelectElement el = new SelectElement(driver.FindElement(By.XPath("//select[@name='zone_code']")));
-                el.SelectByIndex(new Random().Next(0,el.Options.Count-1));
-                }
+                el.SelectByIndex(new Random().Next(0, el.Options.Count - 1));
+            }
+            else {
+                SelectElement el = new SelectElement(zoneSelector);
+                el.SelectByIndex(new Random().Next(0, el.Options.Count - 1));
+            }
+
             driver.FindElement(By.Name("password")).SendKeys(password);
             driver.FindElement(By.Name("confirmed_password")).SendKeys(password);
             driver.FindElement(By.Name("create_account")).Click();
