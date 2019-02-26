@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
 
 namespace csharp_example_10_1
@@ -37,48 +35,70 @@ namespace csharp_example_10_1
             int productCount = 3;
 
             for (int i = 0 ;i < productCount; i++) {
+
                 driver.FindElement(By.CssSelector("li.product")).Click();
 
-                addToCart();
+                if (IsElementPresent(driver, By.Name("options[Size]")))
+                {
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.Name("options[Size]")));
+                    new SelectElement(driver.FindElement(By.Name("options[Size]"))).SelectByIndex(1);
+                }              
 
+                driver.FindElement(By.CssSelector("button[name=\"add_cart_product\"]")).Click();
+
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//span[@class='quantity'][contains(.," + (i+1)+ ")]")));
+             
                 driver.FindElement(By.Id("logotype-wrapper")).Click();
-            }
-
-            driver.FindElement(By.XPath("//a[contains(.,'Checkout »')]")).Click();
-
-            for (int i = 0; i < productCount; i++) {
-                if (IsElementPresent(driver, By.XPath("//td[@class='item']"))) {
-                    driver.FindElement(By.Name("remove_cart_item")).Click();
-                    Thread.Sleep(500);
-                }
-            }
-
-        }
-
-
-        public void addToCart() {
-            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("h1.title")));
-
-            int count = int.Parse(driver.FindElement(By.CssSelector("span[class=\"quantity\"]")).Text);
-            int control = count;
-
-            if (IsElementPresent(driver, By.Name("options[Size]")))
-            {
-                wait.Until(ExpectedConditions.ElementIsVisible(By.Name("options[Size]")));
-                new SelectElement(driver.FindElement(By.Name("options[Size]"))).SelectByIndex(1);
+              
+               
             }
             
-            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("button[name=\"add_cart_product\"]")));
-            driver.FindElement(By.CssSelector("button[name=\"add_cart_product\"]")).Click();
-            control++;
+            driver.FindElement(By.XPath("//a[contains(.,'Checkout »')]")).Click();
 
-            while (control!=count) {
-                Thread.Sleep(100);
-                count = int.Parse(driver.FindElement(By.CssSelector("span[class=\"quantity\"]")).Text);
+            IWebElement table =driver.FindElement(By.Id("order_confirmation-wrapper"));
+
+
+            for (int i = 0; i < productCount; i++) {
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id("order_confirmation-wrapper")));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//button[contains(.,'Remove')]")));
+                driver.FindElement(By.XPath("//button[contains(.,'Remove')]")).Click();
+
+                if (isElementNotExist(table)) {
+                    driver.FindElement(By.XPath("//button[contains(.,'Remove')]")).Click();
+                    table = driver.FindElement(By.Id("order_confirmation-wrapper"));
+                }          
+             
             }
-           
+
+        }      
+
+
+        public bool WaitElementBy(IWebDriver driver, By locator)
+        {
+            try
+            {
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+                return driver.FindElements(locator).Count > 0;
+            }
+            finally
+            {
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0);
+
+            }
         }
-        
+
+        public bool isElementNotExist(IWebElement el) {
+            try
+            {
+                el.Click();
+                return false;
+            }
+            catch (StaleElementReferenceException ex)
+            {
+                return true;
+            }
+        }
+
         public bool IsElementPresent(IWebDriver driver, By locator)
         {
             try
