@@ -45,13 +45,18 @@ namespace csharp_example_1
             wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//td[@id='content']")));
 
             IList<IWebElement> links = driver.FindElements(By.XPath("//i[@class='fa fa-external-link']/parent::*"));
+
             string mainWindow = driver.CurrentWindowHandle;
 
+            int beforeClickWindowCount = driver.WindowHandles.ToList().Count;
+
             foreach (IWebElement el in links) {
-                el.Click();                   
-                List<string> windowHandles = driver.WindowHandles.ToList();
-                foreach (string handle in windowHandles) {
-                    if (mainWindow != handle) {                       
+                el.Click();  
+                
+                wait.Until(driver => driver.WindowHandles.Count == (beforeClickWindowCount + 1));
+
+                foreach (string handle in driver.WindowHandles.ToList()) {
+                    if (mainWindow != handle) {                        
                         driver.SwitchTo().Window(handle).Close();                  
                         driver.SwitchTo().Window(mainWindow);
                     }
@@ -59,12 +64,12 @@ namespace csharp_example_1
                 }
                
                
-            }
-            
-        }  
-   
+            }                     
+      
+    }
+      
 
-        [TearDown]
+    [TearDown]
         public void stop()
         {
             driver.Quit();
