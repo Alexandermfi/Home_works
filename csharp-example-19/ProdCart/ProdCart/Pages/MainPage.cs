@@ -3,23 +3,26 @@ using OpenQA.Selenium.Support.PageObjects;
 
 namespace ProdCart.Pages
 {
-     class MainPage:Page
+     internal class MainPage:Page
     {
         [FindsBy(How = How.XPath, Using = "//a[contains(.,'Checkout »')]")]
         IWebElement CheckOut;
 
-        MainPage(IWebDriver driver) : base(driver)
+        [FindsBy(How = How.Id, Using = "logotype-wrapper")]
+        IWebElement Logotype;
+
+        internal MainPage(IWebDriver driver) : base(driver)
         {
             PageFactory.InitElements(driver, this);
             this.driver = driver;
         }
-        //"//a[contains(.,'Checkout »')]"
-        MainPage Open() {
+
+        internal MainPage Open() {
             driver.Url = "http://litecart.stqa.ru/en/";
             return this;
         }
 
-        MainPage ClickSomeProduct() {
+        internal MainPage ClickSomeProduct() {
             driver.FindElement(By.CssSelector("li.product")).Click();
             return this;
         }

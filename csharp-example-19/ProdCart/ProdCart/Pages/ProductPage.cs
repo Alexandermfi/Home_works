@@ -5,11 +5,11 @@ using OpenQA.Selenium.Support.UI;
 
 namespace ProdCart.Pages
 {
-    class ProductPage: Page
+    internal class ProductPage: Page
     {
         
-        [FindsBy(How = How.CssSelector, Using = "options[Size]")]
-        SelectElement sizeSelector;
+        [FindsBy(How = How.Name, Using = "options[Size]")]
+        IWebElement sizeSelector;
 
         [FindsBy(How = How.CssSelector, Using = "button[name =\"add_cart_product\"]")]
         IWebElement addToCartButton;
@@ -20,26 +20,37 @@ namespace ProdCart.Pages
         [FindsBy(How = How.Id, Using = "logotype-wrapper")]
         IWebElement Logotype;
 
+        private MainPage mainPage;
 
-        ProductPage(IWebDriver driver): base(driver)
+        internal ProductPage(IWebDriver driver): base(driver)
         {
             PageFactory.InitElements(driver, this);
+            mainPage = new MainPage(driver);
             this.driver = driver;
         }
-       
 
-        ProductPage AddToCart(int countOfProduct)
+
+        internal ProductPage AddToCart(int countOfProduct)
         {
-            if (sizeSelector != null) {
-                sizeSelector.SelectByIndex(1);
-            }
+            
             for (int i = 0; i < countOfProduct; i++)
             {
+                try
+                    {
+                        new SelectElement(sizeSelector).SelectByIndex(1);
+                    }                  
+                        catch (NoSuchElementException ex)
+                    {
+                        
+                    }
+                
                 addToCartButton.Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//span[@class='quantity'][contains(.," + (i + 1) + ")]")));
                 Logotype.Click();
+                mainPage.ClickSomeProduct();
             }
             return this;
         }
+       
     }
 }
